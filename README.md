@@ -18,7 +18,7 @@
 
 ## 🛠️ How to Use
 
-1.  Access the project link (e.g., `your-username.github.io/saturn`).
+1.  Access the project link (e.g., `https://fhrdimybds-byte.github.io/Sarturn-Lua-Obfuscator-/`).
 2.  Paste your Source Code into the top input box.
 3.  Click **OBFUSCATE**.
 4.  Copy the output and use it in your favorite executor.
