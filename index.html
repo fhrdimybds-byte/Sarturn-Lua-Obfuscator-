@@ -83,26 +83,58 @@
 
     <script>
         function obfuscate() {
-            let input = document.getElementById('input').value;
-            if (!input) return alert("Please insert code!");
+    let input = document.getElementById('input').value;
+    if (!input) return alert("Insira o código!");
 
-            // Basic minify
-            input = input.replace(/--.*$/gm, "").replace(/\s+/g, " ").trim();
+    const status = document.getElementById('status');
+    status.innerText = "MINIFICANDO E CONVERTENDO...";
 
-            const key = Math.floor(Math.random() * 50) + 10;
-            let bytes = [];
-            for (let i = 0; i < input.length; i++) {
-                bytes.push(input.charCodeAt(i) + key);
-            }
+    // --- STEP 1: Smart Minify ---
+    // Remove line comments (--) and blocks (--[[ ]])
+    input = input.replace(/--\[\[[\s\S]*?\]\]/g, "");
+    input = input.replace(/--.*$/gm, "");
+    // Remove quebras de linha e espaços duplos (preservando espaços necessários)
+    input = input.replace(/\s+/g, " ").trim();
 
-            const v_data = "d_" + Math.random().toString(36).substring(7);
-            const v_buffer = "b_" + Math.random().toString(36).substring(7);
-            
-            let luaCode = `local ${v_data} = {${bytes.join(",")}} local ${v_buffer} = {} for i = 1, #${v_data} do ${v_buffer}[i] = string.char(${v_data}[i] - ${key}) end local _run, _err = loadstring(table["concat"](${v_buffer}), "@Saturn_Fixed") if _run then local _success, _runtimeErr = pcall(function() setfenv(_run, getfenv()) return _run() end) if not _success then warn("Saturn Runtime: " .. tostring(_runtimeErr)) end else warn("Saturn Syntax: " .. tostring(_err)) end`.trim();
+    // --- Obfuscator Settings ---
+    const junk = () => "_" + Math.random().toString(36).substring(2, 10);
+    const vTable = "SaturnData_" + Math.random().toString(36).substring(2, 5);
+    const vKey = junk();
+    const vRes = junk();
+    const vChar = junk();
 
-            document.getElementById('output').value = "--[[ This script is protected using Sarturn Lua obfuscator v20 ]]\n" + luaCode;
-            document.getElementById('status').innerText = "V20: Obfuscation Successful";
-        }
+    const key = Math.floor(Math.random() * 60) + 20;
+    let bytes = [];
+
+    // --- STEP 3: Conversion to Byte Array ---
+    for (let i = 0; i < input.length; i++) {
+        bytes.push(input.charCodeAt(i) + key);
+    }
+
+    // --- STEP 4: Assembling the Final Script ---
+    let luaCode = `
+local ${vTable} = {${bytes.join(",")}}
+local ${vKey} = ${key}
+local ${vRes} = {}
+for i = 1, #${vTable} do
+    ${vRes}[i] = string.char(${vTable}[i] - ${vKey})
+end
+local _exec, _err = loadstring(table.concat(${vRes}), "@SaturnV20")
+if _exec then
+    task.spawn(function()
+        setfenv(_exec, getfenv())
+        _exec()
+    end)
+else
+    warn("Saturn Error: " .. tostring(_err))
+end
+`.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
+
+    document.getElementById('output').value = "--[[ This script is protected using Sarturn Lua obfuscator v20 ]]\n" + luaCode;
+    status.innerText = "Successfully!";
+    
+    if(typeof playSound === 'function') playSound(1400, 0.05);
+}
 
         function newScript() {
             document.getElementById('input').value = "";
@@ -128,6 +160,7 @@
     </script>
 </body>
 </html>
+
 
 
 
