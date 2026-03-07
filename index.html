@@ -1,131 +1,232 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saturn Lua Obfuscator</title>
+    <title>Saturn Lua Obfuscator | Elite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        body { background: #050505; color: #00ff88; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .box { background: #0a0a0a; border: 1px solid #00ff88; padding: 25px; border-radius: 4px; width: 95%; max-width: 700px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.1); }
-        h2 { text-align: center; letter-spacing: 4px; margin-top: 0; color: #fff; text-shadow: 0 0 10px #00ff88; }
-        textarea { width: 100%; height: 160px; background: #000; color: #00ff88; border: 1px solid #1a1a1a; padding: 12px; box-sizing: border-box; margin-bottom: 10px; border-radius: 4px; resize: none; outline: none; font-size: 12px; }
-        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        button { padding: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; flex: 1; text-transform: uppercase; font-family: monospace; transition: 0.3s; }
-        .btn-main { background: #00ff88; color: #000; border: none; }
-        .btn-main:hover { background: #fff; box-shadow: 0 0 15px #00ff88; }
-        .btn-copy { background: transparent; color: #00ff88; border: 1px solid #00ff88; width: 100%; }
-        #status { font-size: 11px; margin-bottom: 10px; text-align: center; color: #888; }
+        :root { 
+            --primary: #0ea5e9; 
+            --bg: #020617; 
+            --card: rgba(15, 23, 42, 0.85); 
+            --border: rgba(30, 41, 59, 0.8); 
+            --glow: rgba(14, 165, 233, 0.3);
+        }
+        
+        /* Temas */
+        .theme-purple { --primary: #a855f7; --glow: rgba(168, 85, 247, 0.3); }
+        .theme-green { --primary: #22c55e; --glow: rgba(34, 197, 94, 0.3); }
 
-        /* Estilo dos Termos de Uso */
-        .terms-container { margin-top: 30px; width: 95%; max-width: 700px; padding: 15px; border-top: 1px dashed #333; color: #666; font-size: 11px; line-height: 1.6; }
-        .terms-title { color: #00ff88; font-weight: bold; margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 1px; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+        
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .loader-circle {
+            width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+            box-shadow: 0 0 15px var(--glow);
+        }
+        .loader-text { color: var(--primary); font-family: 'JetBrains Mono', monospace; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; animation: pulse 1.5s infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .hidden { opacity: 0; visibility: hidden; }
 
-        /* Estilo da Página de Créditos (Modal) */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #0a0a0a; margin: 10% auto; padding: 30px; border: 1px solid #00ff88; width: 80%; max-width: 400px; text-align: center; border-radius: 8px; box-shadow: 0 0 30px rgba(0, 255, 136, 0.2); position: relative; }
-        .dev-card { margin-top: 20px; padding: 15px; border: 1px solid #1a1a1a; background: #050505; text-align: left; }
-        .dev-name { color: #00ff88; font-weight: bold; font-size: 18px; display: block; }
-        .dev-role { color: #888; font-size: 11px; margin-bottom: 5px; display: block; text-transform: uppercase; }
-        .close-modal { color: #ff4444; cursor: pointer; position: absolute; right: 15px; top: 10px; font-weight: bold; font-size: 12px; }
-        .btn-credits { background: transparent; color: #444; border: none; cursor: pointer; font-size: 10px; margin-top: 15px; text-decoration: underline; transition: 0.3s; }
-        .btn-credits:hover { color: #00ff88; }
+        body { background: var(--bg); color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; overflow-x: hidden; }
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        /* Estilo do Toggle de Temas */
+        .theme-switcher {
+            z-index: 10; margin-bottom: 15px; display: flex; gap: 10px;
+            background: var(--card); padding: 8px 15px; border-radius: 50px; border: 1px solid var(--border);
+        }
+        .theme-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); transition: 0.2s; }
+        .theme-dot:hover { transform: scale(1.2); }
+        .dot-blue { background: #0ea5e9; }
+        .dot-purple { background: #a855f7; }
+        .dot-green { background: #22c55e; }
+
+        .container { 
+            width: 100%; max-width: 800px; background: var(--card); padding: 25px; border-radius: 30px; 
+            border: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); z-index: 2;
+        }
+
+        header { text-align: center; margin-bottom: 20px; }
+        h2 { font-weight: 800; font-size: 26px; color: var(--primary); text-shadow: 0 0 10px var(--glow); }
+
+        .label { font-size: 10px; color: #94a3b8; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; display: block; margin-top: 10px; }
+        
+        textarea { 
+            width: 100%; height: 160px; background: rgba(0, 0, 0, 0.5); color: var(--primary); 
+            border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-family: 'JetBrains Mono', monospace; 
+            font-size: 13px; resize: none; outline: none; transition: 0.3s;
+        }
+        textarea:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--glow); }
+
+        .button-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 15px 0; }
+        @media (min-width: 600px) { .button-group { grid-template-columns: 2fr 1fr 1fr; } }
+
+        .btn { 
+            position: relative; overflow: hidden; padding: 14px; border: none; border-radius: 12px; 
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            gap: 8px; font-size: 13px; transition: 0.2s;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-main { background: var(--primary); color: #000; box-shadow: 0 4px 10px var(--glow); }
+        .btn-sec { background: #1e293b; color: #fff; border: 1px solid var(--border); }
+
+        .ripple { position: absolute; background: rgba(255, 255, 255, 0.3); border-radius: 50%; transform: scale(0); animation: ripple-animation 0.6s linear; pointer-events: none; }
+        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
+
+        .log { font-size: 11px; color: var(--primary); background: #000; padding: 12px; border-radius: 8px; border-left: 3px solid var(--primary); font-family: monospace; }
     </style>
 </head>
-<body>
+<body id="main-body">
 
-    <div class="box">
-        <h2>Sarturn Lua obfuscator</h2>
-        <div id="status">Sarturn Lua obfuscator by SarturnStudio</div>
-        
-        <textarea id="input" placeholder="Paste your script"></textarea>
-        
-        <div class="btn-group">
-            <button class="btn-main" onclick="obfuscate()">Obfuscate</button>
-            <button style="background:#200; color:#f44; border:1px solid #f44;" onclick="newScript()">Clear</button>
-        </div>
+<div id="loader">
+    <div class="loader-circle"></div>
+    <div class="loader-text">Starting Saturn Nexus...</div>
+</div>
 
-        <textarea id="output" readonly placeholder="The protected code will appear here..."></textarea>
-        <button class="btn-copy" id="copyBtn" onclick="copyToClipboard()">Copy Result</button>
+<div class="theme-switcher">
+    <span style="font-size: 10px; color: #94a3b8; font-weight: bold; margin-right: 5px; text-transform: uppercase;">Themes:</span>
+    <div class="theme-dot dot-blue" onclick="changeTheme('blue')"></div>
+    <div class="theme-dot dot-purple" onclick="changeTheme('purple')"></div>
+    <div class="theme-dot dot-green" onclick="changeTheme('green')"></div>
+</div>
+
+<canvas id="particles-canvas"></canvas>
+
+<div class="container">
+    <header>
+        <h2>Saturn Lua Obfuscator<span style="color:#fff"> - v4.0</span></h2>
+        <p style="color: #64748b; font-size: 12px;">v34 Engine + Smart Minify</p>
+    </header>
+    
+    <span class="label">Input Script</span>
+    <textarea id="input" placeholder="-- Ex: print('Sarturn Lua Obfuscator')..."></textarea>
+    
+    <span class="label">Protected Code</span>
+    <textarea id="output" readonly placeholder="The result will appear here..."></textarea>
+    
+    <div class="button-group">
+        <button class="btn btn-main" onclick="obfuscate(event)"><i class="fas fa-bolt"></i> Obfuscate With Nexus v4.0</button>
+        <button class="btn btn-sec" onclick="copyCode(event)"><i class="fas fa-copy"></i> Copy</button>
+        <button class="btn btn-sec" onclick="newScript(event)"><i class="fas fa-trash"></i> New script</button>
     </div>
+    
+    <div class="log" id="status"><span>👋 Welcome to Saturn Nexus V4</span></div>
+</div>
 
-    <div class="terms-container">
-        <span class="terms-title">Terms of Use & Responsibility</span>
-        <b>1.</b> THE Saturn Obfuscator is a code minification and protection tool for educational and security purposes.<br>
-        <b>2.</b> We are not responsible for any damage, bans, or account loss resulting from the use of scripts obfuscated by this tool.<br>
-        <b>3.</b> The use of this tool to hide malicious code (Loggers, Backdoors, etc.) is strictly prohibited and is the sole responsibility of the user.<br>
-        <b>4.</b> By using Saturn, you agree that the obfuscation is not 100% unbreakable, but serves as a barrier against basic reverse engineering.
-        
-        <center>
-            <button class="btn-credits" onclick="openModal()">[ VIEW PROJECT CREDITS ]</button>
-        </center>
-    </div>
+<script>
+    function changeTheme(color) {
+    const body = document.body; // Seleciona o corpo da página
+    
+    // Remove os temas anteriores
+    body.classList.remove('theme-purple', 'theme-green');
+    
+    // Aplica o novo tema se não for o azul (que é o padrão)
+    if (color === 'purple') body.classList.add('theme-purple');
+    if (color === 'green') body.classList.add('theme-green');
+    
+    // --- O SEGREDO ESTÁ AQUI ---
+    // Guarda o nome do tema no "disco" do navegador
+    localStorage.setItem('saturn-theme', color);
+    
+    setStatus("👋 Welcome to Saturn Nexus V4 bye SaturnStudio");
+}
 
-    <div id="creditsModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">[ CLOSE ]</span>
-            <h3 style="color: #fff; letter-spacing: 2px; margin-bottom: 5px;">PROJECT DEVELOPERS</h3>
-            <div style="height: 1px; background: #00ff88; width: 50px; margin: 0 auto 20px auto;"></div>
-            
-            <div class="dev-card">
-                <span class="dev-name">SarturnStudio</span>
-                <span class="dev-role">Lead Developer & Architecture</span>
-                <p style="font-size: 11px; color: #666; margin: 5px 0 0 0;">Created the Saturn V23 core logic and Luna UI compatibility layer.</p>
-            </div>
 
-            <div class="dev-card">
-                <span class="dev-name">Gemini AI</span>
-                <span class="dev-role">Optimization & Logic Support</span>
-                <p style="font-size: 11px; color: #666; margin: 5px 0 0 0;">Assisted in debugging Delta Executor compatibility and VM structure.</p>
-            </div>
+    // --- RIPPLE EFFECT ---
+    function createRipple(event) {
+        const button = event.currentTarget;
+        const circle = document.createElement("span");
+        const diameter = Math.max(button.clientWidth, button.clientHeight);
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${event.clientX - button.offsetLeft - (diameter/2)}px`;
+        circle.style.top = `${event.clientY - button.offsetTop - (diameter/2)}px`;
+        circle.classList.add("ripple");
+        button.appendChild(circle);
+        setTimeout(() => circle.remove(), 600);
+    }
 
-            <p style="margin-top: 25px; font-size: 9px; color: #333; text-transform: uppercase;">Saturn Engine © 2026 - All Rights Reserved</p>
-        </div>
-    </div>
+    window.addEventListener('load', () => { setTimeout(() => { document.getElementById('loader').classList.add('hidden'); }, 1500); });
+// Função para carregar o tema salvo assim que a página abre
+function loadSavedTheme() {
+    const savedTheme = localStorage.getItem('saturn-theme');
+    if (savedTheme) {
+        changeTheme(savedTheme);
+    }
+}
 
-    <script>
-        function obfuscate() {
-            let input = document.getElementById('input').value;
-            if (!input) return alert("Please insert code!");
+// Executa a verificação de tema mal o script carrega
+loadSavedTheme();
 
-            // Minify básico
-            input = input.replace(/--.*$/gm, "").replace(/\s+/g, " ").trim();
+    // --- PARTÍCULAS ---
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
 
-            const key = Math.floor(Math.random() * 50) + 10;
-            let bytes = [];
-            for (let i = 0; i < input.length; i++) {
-                bytes.push(input.charCodeAt(i) + key);
-            }
-
-            const v_data = "d_" + Math.random().toString(36).substring(7);
-            const v_buffer = "b_" + Math.random().toString(36).substring(7);
-            
-            let luaCode = `local ${v_data} = {${bytes.join(",")}} local ${v_buffer} = {} for i = 1, #${v_data} do ${v_buffer}[i] = string.char(${v_data}[i] - ${key}) end local _run, _err = loadstring(table["concat"](${v_buffer}), "@Saturn_Fixed") if _run then local _success, _runtimeErr = pcall(function() setfenv(_run, getfenv()) return _run() end) if not _success then warn("Saturn Runtime: " .. tostring(_runtimeErr)) end else warn("Saturn Syntax: " .. tostring(_err)) end`.trim();
-
-            document.getElementById('output').value = "--[[ This script is protected using Sarturn Lua obfuscator v20 ]]\n" + luaCode;
-            document.getElementById('status').innerText = "V23: OBFUSCATION SUCCESSFUL";
+    class Particle {
+        constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 1; this.speedX = Math.random() * 0.4 - 0.2; this.speedY = Math.random() * 0.4 - 0.2; }
+        update() { this.x += this.speedX; this.y += this.speedY; if (this.x > canvas.width) this.x = 0; if (this.y > canvas.height) this.y = 0; }
+        draw() { 
+            let pColor = getComputedStyle(document.documentElement).getPropertyValue('--primary');
+            ctx.fillStyle = pColor + "44"; // Adiciona transparência
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); 
         }
+    }
+    function init() { particles = []; for (let i = 0; i < 40; i++) particles.push(new Particle()); }
+    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+    init(); animate();
 
-        function newScript() {
-            document.getElementById('input').value = "";
-            document.getElementById('output').value = "";
-            document.getElementById('status').innerText = "Sarturn Lua obfuscator by SarturnStudio";
-        }
+    // --- LÓGICA DO SITE ---
+    function setStatus(t) { document.getElementById('status').querySelector('span').innerText = t; }
 
-        function copyToClipboard() {
-            const output = document.getElementById('output');
-            if (!output.value) return;
-            navigator.clipboard.writeText(output.value);
-            document.getElementById('copyBtn').innerText = "✓ Copied Successfully";
-            setTimeout(() => { document.getElementById('copyBtn').innerText = "Copy Result"; }, 2000);
-        }
+    function luaMinify(code) { return code.replace(/--\[\[[\s\S]*?\]\]/g, '').replace(/--.*$/gm, '').replace(/\s+/g, ' ').trim(); }
 
-        // Funções do Modal
-        function openModal() { document.getElementById("creditsModal").style.display = "block"; }
-        function closeModal() { document.getElementById("creditsModal").style.display = "none"; }
-        window.onclick = function(event) {
-            let modal = document.getElementById("creditsModal");
-            if (event.target == modal) { modal.style.display = "none"; }
-        }
-    </script>
+    function copyCode(e) {
+        createRipple(e);
+        const out = document.getElementById('output');
+        if(!out.value) return;
+        out.select(); document.execCommand('copy');
+        setStatus("Copied to clipboard!");
+    }
+
+    function newScript(e) {
+        createRipple(e);
+        document.getElementById('input').value = ""; document.getElementById('output').value = "";
+        setStatus("Ready for new mission.");
+    }
+
+    function obfuscate(e) {
+        createRipple(e);
+        const inputRaw = document.getElementById('input').value;
+        const output = document.getElementById('output');
+        if (!inputRaw.trim()) return setStatus("Please enter a code!");
+
+        setStatus("Applying v34 Protection...");
+        const input = luaMinify(inputRaw);
+        const salt = Math.floor(Math.random() * 100) + 50;
+        const randVar = (n) => "_" + n + Math.random().toString(36).substring(7);
+        const v_t = randVar("S"), v_v = randVar("VM");
+
+        const toHex = (str, k) => str.split('').map(c => '"\\x' + (c.charCodeAt(0) ^ k).toString(16).padStart(2, '0') + '"').join(',');
+
+        const code = `--[[ This script is protected using Saturn Lua obfuscator v4.0 ]] local k=${salt} local ${v_t}={${toHex(input, salt)}} local function ${v_v}(t,k) local r="" local sb,sc,bx=string.byte,string.char,bit32.bxor for i=1,#t do r=r..sc(bx(sb(t[i],1),k)) end return r end loadstring(${v_v}(${v_t},k))()`;
+
+        setTimeout(() => { output.value = code; setStatus("Script Protected Successfully!"); }, 600);
+    }
+</script>
 </body>
 </html>
