@@ -244,10 +244,11 @@ loadSavedTheme();
 
         const toHex = (str, k) => str.split('').map(c => '"\\x' + (c.charCodeAt(0) ^ k).toString(16).padStart(2, '0') + '"').join(',');
 
-        const code = `--[[ This script is protected using Saturn Lua obfuscator v4.0 ]] local k=${salt} local ${v_t}={${toHex(input, salt)}} local function ${v_v}(t,k) local r="" local sb,sc,bx=string.byte,string.char,bit32.bxor for i=1,#t do r=r..sc(bx(sb(t[i],1),k)) end return r end loadstring(${v_v}(${v_t},k))()`;
+        const code = `--[[ This script is protected using Saturn Lua obfuscator v4.0 https://fhrdimybds-byte.github.io/Sarturn-Lua-Obfuscator-/ ]] local k=${salt} local ${v_t}={${toHex(input, salt)}} local function ${v_v}(t,k) local r="" local sb,sc,bx=string.byte,string.char,bit32.bxor for i=1,#t do r=r..sc(bx(sb(t[i],1),k)) end return r end loadstring(${v_v}(${v_t},k))()`;
 
         setTimeout(() => { output.value = code; setStatus("Script Protected Successfully!"); }, 600);
     }
 </script>
 </body>
 </html>
+
