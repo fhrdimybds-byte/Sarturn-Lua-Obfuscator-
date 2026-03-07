@@ -38,7 +38,8 @@ The process follows this pipeline:
 2.  **XOR Transformation:** Encodes the byte-stream using a randomized salt.
 3.  **Hex Formatting:** Converts the result into a protected table.
 4.  **Loadstring Wrapper:** Wraps the logic into a self-executing VM that uses `bit32` for high-speed decryption.
-
+5.  **⛓️‍💥Anti Deobfuscate:**
+The Hex Deobfuscators cannot deobfuscate the Saturn Moon Obfuscator. 
 ---
 
 ## ⚠️ Disclaimer
