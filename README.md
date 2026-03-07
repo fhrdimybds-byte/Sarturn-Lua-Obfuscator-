@@ -1,4 +1,4 @@
-# 🪐 Saturn Nexus V4 | Elite Lua Obfuscator
+# 🪐 Saturn Nexus V4.0 | Elite Lua Obfuscator
 
 ![Version](https://img.shields.io/badge/Version-4.0.0-0ea5e9?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
@@ -39,7 +39,7 @@ The process follows this pipeline:
 3.  **Hex Formatting:** Converts the result into a protected table.
 4.  **Loadstring Wrapper:** Wraps the logic into a self-executing VM that uses `bit32` for high-speed decryption.
 5.  **⛓️‍💥Anti Deobfuscate:**
-The Hex Deobfuscators cannot deobfuscate the Saturn Moon Obfuscator. 
+The Hex Deobfuscators cannot deobfuscate the Saturn Lua Obfuscator. 
 ---
 
 ## ⚠️ Disclaimer
