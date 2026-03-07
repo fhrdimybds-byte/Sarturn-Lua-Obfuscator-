@@ -108,7 +108,7 @@
 <div class="container">
     <header>
         <h2>Saturn Lua Obfuscator<span style="color:#fff"> - v4.0</span></h2>
-        <p style="color: #64748b; font-size: 12px;">v34 Engine + Smart Minify</p>
+        <p style="color: #64748b; font-size: 12px;">v34 Engine + Smart Minify + Anti-Deobfuscate</p>
     </header>
     
     <span class="label">Input Script</span>
@@ -120,13 +120,34 @@
     <div class="button-group">
         <button class="btn btn-main" onclick="obfuscate(event)"><i class="fas fa-bolt"></i> Obfuscate With Nexus v4.0</button>
         <button class="btn btn-sec" onclick="copyCode(event)"><i class="fas fa-copy"></i> Copy</button>
+        <button class="btn btn-download" onclick="downloadLua(event)"><i class="fas fa-download"></i> .LUA</button>
         <button class="btn btn-sec" onclick="newScript(event)"><i class="fas fa-trash"></i> New script</button>
     </div>
     
-    <div class="log" id="status"><span>👋 Welcome to Saturn Nexus V4 by SaturnStudio </span></div>
+    <div class="log" id="status"><span>👋 Welcome to Saturn Lua Obfuscator</span></div>
 </div>
 
 <script>
+// --- FUNÇÃO DE DOWNLOAD ---
+    function downloadLua(e) {
+        createRipple(e);
+        const code = document.getElementById('output').value;
+        if (!code) return setStatus("Nothing to download! Obfuscate first.");
+
+        const blob = new Blob([code], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        
+        a.href = url;
+        a.download = "obfuscated_script.lua";
+        document.body.appendChild(a);
+        a.click();
+        
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        setStatus("File 'obfuscated_script.lua' downloaded!");
+    }
+    
     function changeTheme(color) {
     const body = document.body; // Seleciona o corpo da página
     
@@ -141,7 +162,7 @@
     // Guarda o nome do tema no "disco" do navegador
     localStorage.setItem('saturn-theme', color);
     
-    setStatus("👋 Welcome to Saturn Nexus V4 by SaturnStudio");
+    setStatus("👋 Welcome to Saturn Lua Obfuscator V4 by SaturnStudio");
 }
 
 
@@ -230,4 +251,3 @@ loadSavedTheme();
 </script>
 </body>
 </html>
-
