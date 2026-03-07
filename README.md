@@ -1,44 +1,52 @@
-# 🪐 Saturn Obfuscator V20 - Ultra Support
+# 🪐 Saturn Nexus V4 | Elite Lua Obfuscator
 
-![License](https://img.shields.io/badge/License-MIT-00ff88.svg)
-![Version](https://img.shields.io/badge/Version-20.0-blue.svg)
-![Platform](https://img.shields.io/badge/Platform-Roblox-lightgrey.svg)
+![Version](https://img.shields.io/badge/Version-4.0.0-0ea5e9?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-Roblox%20%2F%20Luau-white?style=for-the-badge)
 
-**Saturn V20** is a high-performance obfuscator specifically engineered for the Roblox scripting community. Unlike other web-based obfuscators, Saturn utilizes a **Memory Buffer Table** engine, ensuring 100% compatibility with complex UI libraries such as **Luna UI Library**.
+**Saturn Nexus V4** is a high-performance, web-based Luau obfuscator designed to protect your scripts from decompilers and leachers. Built with a sleek Glassmorphism UI and a powerful **v34 Encryption Engine**, it offers professional-grade protection directly from your mobile or desktop browser.
 
+---
 
+## ✨ Key Features
 
-## 🚀 Key Features
+* **🛡️ v34 Encryption Engine:** Advanced XOR-based encryption with dynamic salt keys.
+* **🧹 Smart Minifier:** Automatically strips comments, whitespaces, and collapses code into a single high-performance line.
+* **🌌 Particle Background:** Interactive floating particles and connection lines for a premium "hacker" aesthetic.
+* **🎨 Multi-Theme Support:** Switch instantly between **Saturn Blue**, **Nebula Purple**, and **Emerald Hacker** modes (Preferences are saved via LocalStorage).
+* **⚡ Ultra Responsive:** Optimized for mobile editors like **QuickEdit** and high-end desktop browsers.
+* **🌀 Interactive UI:** Features a custom preloader, ripple click effects, and smooth transitions.
 
-* **Luna UI Ready:** The only free obfuscator that won't crash or break the Luna UI Library's metadata.
-* **Intelligent Minify:** Strips comments and unnecessary whitespace before encryption, drastically reducing the final file size.
-* **Memory Buffer (V17 Engine):** Uses `table.concat` to rebuild code in RAM, preventing "silent crashes" on mobile executors (Delta, Fluxus, Arceus).
-* **Semicolon Encoding:** Integer-based encoding that bypasses "malformed escape sequence" errors common in standard string obfuscation.
-* **Thread Injection:** Runs the script in a separate thread (`task.spawn`) to ensure maximum UI performance and stability.
+---
 
-## 🛠️ How to Use
+## 🚀 How to Use
 
-1.  Access the project link (e.g., `https://fhrdimybds-byte.github.io/Sarturn-Lua-Obfuscator-/`).
-2.  Paste your Source Code into the top input box.
-3.  Click **OBFUSCATE**.
-4.  Copy the output and use it in your favorite executor.
-
-## 🔒 Security Layers
-
-Saturn V20 applies multiple layers of protection:
-1.  **Metadata Cleaning:** Removes all traces of the original author and comments.
-2.  **XOR Shift:** Mathematical encryption applied to every single character.
-3.  **Environment Virtualization:** Uses `setfenv` to isolate execution and prevent environment leaks.
-4.  **Anti-Dump Essentials:** A structure designed to frustrate simple deobfuscators and debuggers.
-
-## 📋 Terms of Use
-
-This project was created for educational purposes and intellectual property protection. The developer is not responsible for:
-- In-game bans.
-- Use of the software to hide malicious code (Loggers, Backdoors, etc.).
-- Execution failures on unofficial or outdated executors.
+1.  **Load:** Open the `index.html` file in any modern browser.
+2.  **Input:** Paste your raw Lua/Luau script into the **Input Script** area.
+3.  **Process:** Click the **Obfuscate** button. The engine will minify and encrypt your code simultaneously.
+4.  **Export:** Click **Copy** to save the protected code to your clipboard.
 
 
 
 ---
-Developed with ❤️ by [SaturnStudio]
+
+## 🛠️ Technical Details
+
+Saturn Nexus utilizes a Virtual Machine (VM) approach to execute encrypted hex strings. 
+The process follows this pipeline:
+1.  **Regex Cleaning:** Removes all non-essential characters.
+2.  **XOR Transformation:** Encodes the byte-stream using a randomized salt.
+3.  **Hex Formatting:** Converts the result into a protected table.
+4.  **Loadstring Wrapper:** Wraps the logic into a self-executing VM that uses `bit32` for high-speed decryption.
+
+---
+
+## ⚠️ Disclaimer
+
+This tool is intended for personal use and script protection. While Saturn Nexus provides strong protection against most common deobfuscators, no obfuscation is 100% uncrackable. Always keep backups of your original source code.
+
+---
+
+<p align="center">
+  By SaturnStudio</b>
+</p>
